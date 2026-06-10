@@ -1,1 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Windows 11</title>
 
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:"Segoe UI",sans-serif;
+    background:linear-gradient(135deg,#0f6cbd,#60a5fa);
+    min-height:100vh;
+    padding:20px;
+    color:#fff;
+}
+
+.header{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.header h1{
+    margin-bottom:10px;
+}
+
+.search{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    padding:20px;
+    min-height:220px;
+}
+
+.card h2{
+    margin-bottom:15px;
+}
+
+.clock-placeholder{
+    text-align:center;
+    font-size:18px;
+    margin-top:50px;
+}
+
+.weather{
+    font-size:18px;
+}
+
+.news-item{
+    margin-bottom:10px;
+}
+
+.fx{
+    font-size:20px;
+    line-height:2;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>Tableau de bord personnel</h1>
+
+<input
+class="search"
+placeholder="Recherche Google..."
+onkeydown="
+if(event.key==='Enter'){
+window.open(
+'https://www.google.com/search?q='+
+encodeURIComponent(this.value)
+);
+}">
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h2>Paris</h2>
+<div id="clock-paris" class="clock-placeholder">
+Horloge Paris
+</div>
+</div>
+
+<div class="card">
+<h2>Londres</h2>
+<div id="clock-london" class="clock-placeholder">
+Horloge Londres
+</div>
+</div>
+
+<div class="card">
+<h2>New York</h2>
+<div id="clock-ny" class="clock-placeholder">
+Horloge New York
+</div>
+</div>
+
+<div class="card">
+<h2>Météo locale</h2>
+<div id="weather" class="weather">
+Chargement...
+</div>
+</div>
+
+<div class="card">
+<h2>Actualités</h2>
+<div id="news">
+Chargement...
+</div>
+</div>
+
+<div class="card">
+<h2>Devises</h2>
+
+<div id="fx" class="fx">
+Chargement...
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
