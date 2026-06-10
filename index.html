@@ -146,5 +146,142 @@ Chargement...
 
 </div>
 
+    <script>
+
+// ===== CONFIG =====
+
+const OPENWEATHER_API_KEY =
+"33dd8e07bda2e3a42995474eb8af659d";
+
+const GNEWS_API_KEY =
+"ef5cea8c4b7b872f2ef3f4386ab69a40";
+
+// ===== HORLOGES =====
+
+function updateClocks() {
+
+ document.getElementById("clock-paris")
+ .innerHTML =
+ new Date().toLocaleTimeString(
+ 'fr-FR',
+ {timeZone:'Europe/Paris'}
+ );
+
+ document.getElementById("clock-london")
+ .innerHTML =
+ new Date().toLocaleTimeString(
+ 'fr-FR',
+ {timeZone:'Europe/London'}
+ );
+
+ document.getElementById("clock-ny")
+ .innerHTML =
+ new Date().toLocaleTimeString(
+ 'fr-FR',
+ {timeZone:'America/New_York'}
+ );
+}
+
+setInterval(updateClocks,1000);
+updateClocks();
+
+// ===== METEO =====
+
+navigator.geolocation.getCurrentPosition(
+
+async position => {
+
+try {
+
+const lat = position.coords.latitude;
+const lon = position.coords.longitude;
+
+const url =
+`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${OPENWEATHER_API_KEY}`;
+
+const weather =
+await fetch(url).then(r=>r.json());
+
+document.getElementById("weather").innerHTML =
+
+`<strong>${weather.name}</strong><br>
+${Math.round(weather.main.temp)} °C<br>
+${weather.weather[0].description}`;
+
+}
+
+catch(error){
+
+document.getElementById("weather")
+.innerHTML =
+"Impossible de charger la météo";
+
+}
+
+}
+
+);
+
+// ===== DEVISES =====
+
+fetch(
+"https://api.frankfurter.app/latest?from=EUR&to=USD,CHF,GBP"
+)
+
+.then(r=>r.json())
+
+.then(data=>{
+
+document.getElementById("fx").innerHTML =
+
+`EUR/USD : ${data.rates.USD}<br>
+EUR/CHF : ${data.rates.CHF}<br>
+EUR/GBP : ${data.rates.GBP}`;
+
+})
+
+.catch(()=>{
+
+document.getElementById("fx")
+.innerHTML =
+"Impossible de charger les devises";
+
+});
+
+// ===== ACTUALITES =====
+
+fetch(
+`https://gnews.io/api/v4/top-headlines?lang=fr&country=fr&max=5&apikey=${GNEWS_API_KEY}`
+)
+
+.then(r=>r.json())
+
+.then(data=>{
+
+document.getElementById("news").innerHTML =
+
+data.articles.map(article =>
+
+`<div style="margin-bottom:12px">
+<a href="${article.url}"
+target="_blank"
+style="color:white;text-decoration:none;">
+${article.title}
+</a>
+</div>`
+
+).join("");
+
+})
+
+.catch(()=>{
+
+document.getElementById("news")
+.innerHTML =
+"Impossible de charger les actualités";
+
+});
+
+</script>
 </body>
 </html>
