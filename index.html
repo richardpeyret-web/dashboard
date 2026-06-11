@@ -225,7 +225,7 @@ document.getElementById("weather")
 // ===== DEVISES =====
 
 fetch(
-"https://api.frankfurter.app/latest?from=EUR&to=USD,CHF,GBP"
+"https://api.frankfurter.app/v1/latest?base=EUR&symbols=USD,CHF,GBP"
 )
 
 .then(r=>r.json())
