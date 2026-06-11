@@ -223,62 +223,48 @@ document.getElementById("weather")
 );
 
 // ===== DEVISES =====
-
-fetch(
-"https://api.frankfurter.app/v1/latest?base=EUR&symbols=USD,CHF,GBP"
-)
-
+fetch("https://open.er-api.com/v6/latest/EUR")
 .then(r=>r.json())
-
 .then(data=>{
 
-document.getElementById("fx").innerHTML =
+document.getElementById("fx").innerHTML=
 
 `EUR/USD : ${data.rates.USD}<br>
 EUR/CHF : ${data.rates.CHF}<br>
 EUR/GBP : ${data.rates.GBP}`;
 
 })
-
-.catch(()=>{
-
-document.getElementById("fx")
-.innerHTML =
-"Impossible de charger les devises";
-
+.catch(err=>{
+document.getElementById("fx").innerHTML=
+"Erreur devises";
 });
-
 // ===== ACTUALITES =====
 
 fetch(
-`https://gnews.io/api/v4/top-headlines?lang=fr&country=fr&max=5&apikey=${GNEWS_API_KEY}`
+"https://api.rss2json.com/v1/api.json?rss_url=https://www.lemonde.fr/rss/une.xml"
 )
-
 .then(r=>r.json())
-
 .then(data=>{
 
-document.getElementById("news").innerHTML =
+document.getElementById("news").innerHTML=
 
-data.articles.map(article =>
+data.items.slice(0,5).map(item=>
 
-`<div style="margin-bottom:12px">
-<a href="${article.url}"
+`<div style="margin-bottom:10px">
+<a href="${item.link}"
 target="_blank"
-style="color:white;text-decoration:none;">
-${article.title}
+style="color:white">
+${item.title}
 </a>
 </div>`
 
 ).join("");
 
 })
+.catch(err=>{
 
-.catch(()=>{
-
-document.getElementById("news")
-.innerHTML =
-"Impossible de charger les actualités";
+document.getElementById("news").innerHTML=
+"Erreur actualités";
 
 });
 
