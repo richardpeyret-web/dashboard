@@ -262,8 +262,64 @@ update();
 }
 
 loadWeather();
+    async function loadRates(){
+
+    const fxDiv =
+        document.getElementById("fx");
+
+    try{
+
+        const response =
+            await fetch(
+            "https://open.er-api.com/v6/latest/EUR"
+            );
+
+        const data =
+            await response.json();
+
+        fxDiv.innerHTML =
+
+        `
+        <div style="font-size:22px;margin:10px 0">
+            EUR/USD :
+            ${data.rates.USD.toFixed(4)}
+        </div>
+
+        <div style="font-size:22px;margin:10px 0">
+            EUR/CHF :
+            ${data.rates.CHF.toFixed(4)}
+        </div>
+
+        <div style="font-size:22px;margin:10px 0">
+            EUR/GBP :
+            ${data.rates.GBP.toFixed(4)}
+        </div>
+        `;
+
+    }
+
+    catch(error){
+
+        fxDiv.innerHTML =
+            "Erreur devises";
+
+    }
+
+}
+
+loadRates();
 
 </script>
+    <div class="card">
+<h2>Devises</h2>
+
+<div id="fx">
+
+Chargement...
+
+</div>
+
+</div>
 
 </body>
 </html>
