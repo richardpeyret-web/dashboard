@@ -3,359 +3,181 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Windows 11</title>
+
+<title>Dashboard</title>
 
 <style>
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
 body{
-    font-family:"Segoe UI",sans-serif;
+    margin:0;
+    padding:20px;
+    font-family:Segoe UI,sans-serif;
     background:linear-gradient(135deg,#0f6cbd,#60a5fa);
-    min-height:100vh;
-    padding:20px;
-    color:#fff;
+    color:white;
 }
 
-.header{
-    background:rgba(255,255,255,0.15);
-    backdrop-filter:blur(20px);
-    border-radius:20px;
-    padding:20px;
+h1{
     margin-bottom:20px;
-}
-
-.header h1{
-    margin-bottom:10px;
-}
-
-.search{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:12px;
-    font-size:16px;
 }
 
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
     gap:20px;
 }
 
 .card{
-    background:rgba(255,255,255,0.15);
-    backdrop-filter:blur(20px);
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(15px);
     border-radius:20px;
     padding:20px;
-    min-height:220px;
-}
-
-.card h2{
-    margin-bottom:15px;
-}
-
-.clock-placeholder{
     text-align:center;
-    font-size:18px;
-    margin-top:50px;
 }
 
-.weather{
-    font-size:18px;
-}
-
-.news-item{
-    margin-bottom:10px;
-}
-
-.fx{
-    font-size:20px;
-    line-height:2;
+canvas{
+    background:white;
+    border-radius:50%;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div class="header">
-<h1>Tableau de bord personnel</h1>
-
-<input
-class="search"
-placeholder="Recherche Google..."
-onkeydown="
-if(event.key==='Enter'){
-window.open(
-'https://www.google.com/search?q='+
-encodeURIComponent(this.value)
-);
-}">
-</div>
+<h1>Tableau de bord</h1>
 
 <div class="grid">
 
 <div class="card">
 <h2>Paris</h2>
-<div id="clock-paris" class="clock-placeholder">
 <canvas id="parisClock" width="180" height="180"></canvas>
-</div>
 </div>
 
 <div class="card">
 <h2>Londres</h2>
-<div id="clock-london" class="clock-placeholder">
 <canvas id="londonClock" width="180" height="180"></canvas>
-</div>
 </div>
 
 <div class="card">
 <h2>New York</h2>
-<div id="clock-ny" class="clock-placeholder">
 <canvas id="nyClock" width="180" height="180"></canvas>
 </div>
-</div>
-
-<div class="card">
-<h2>Météo locale</h2>
-<div id="weather" class="weather">
-Chargement...
-</div>
-</div>
-
-<div class="card">
-<h2>Actualités</h2>
-<div id="news">
-Chargement...
-</div>
-</div>
-
-<div class="card">
-<h2>Devises</h2>
-
-<div id="fx" class="fx">
-Chargement...
-</div>
 
 </div>
 
-</div>
 <script>
 
-function drawClock(canvasId, timeZone) {
+function drawClock(canvasId,timeZone){
 
-    const canvas = document.getElementById(canvasId);
+ const canvas=document.getElementById(canvasId);
+ const ctx=canvas.getContext("2d");
 
-    if (!canvas) return;
+ const r=90;
 
-    const ctx = canvas.getContext("2d");
+ ctx.clearRect(0,0,180,180);
 
-    const radius = canvas.height / 2;
+ ctx.save();
+ ctx.translate(r,r);
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+ ctx.beginPath();
+ ctx.arc(0,0,80,0,2*Math.PI);
+ ctx.fillStyle="white";
+ ctx.fill();
 
-    ctx.save();
+ ctx.strokeStyle="#ccc";
+ ctx.lineWidth=3;
+ ctx.stroke();
 
-    ctx.translate(radius, radius);
+ for(let i=1;i<=12;i++){
 
-    drawFace(ctx, radius);
-    drawNumbers(ctx, radius);
+   let a=i*Math.PI/6;
 
-    const now = new Date();
+   ctx.fillStyle="#333";
 
-    const local = new Date(
-        now.toLocaleString("en-US",{timeZone})
-    );
+   ctx.fillText(
+      i,
+      Math.sin(a)*60-4,
+      -Math.cos(a)*60+4
+   );
 
-    const hour = local.getHours();
-    const minute = local.getMinutes();
-    const second = local.getSeconds();
+ }
 
-    drawTime(ctx,radius,hour,minute,second);
+ const d=new Date(
+   new Date().toLocaleString(
+     "en-US",
+     {timeZone}
+   )
+ );
 
-    ctx.restore();
+ let h=d.getHours()%12;
+ let m=d.getMinutes();
+ let s=d.getSeconds();
+
+ function hand(a,l,w,c){
+
+   ctx.strokeStyle=c;
+   ctx.lineWidth=w;
+
+   ctx.beginPath();
+   ctx.moveTo(0,0);
+
+   ctx.lineTo(
+      Math.sin(a)*l,
+      -Math.cos(a)*l
+   );
+
+   ctx.stroke();
+ }
+
+ hand(
+   (h+m/60)*Math.PI/6,
+   40,
+   5,
+   "#111"
+ );
+
+ hand(
+   m*Math.PI/30,
+   55,
+   3,
+   "#333"
+ );
+
+ hand(
+   s*Math.PI/30,
+   65,
+   1,
+   "red"
+ );
+
+ ctx.restore();
 }
 
-function drawFace(ctx, radius){
+function update(){
 
-    ctx.beginPath();
-    ctx.arc(0,0,radius*0.95,0,2*Math.PI);
-    ctx.fillStyle="#ffffff";
-    ctx.fill();
+ drawClock(
+   "parisClock",
+   "Europe/Paris"
+ );
 
-    ctx.strokeStyle="#d0d7e2";
-    ctx.lineWidth=4;
-    ctx.stroke();
+ drawClock(
+   "londonClock",
+   "Europe/London"
+ );
 
-    ctx.beginPath();
-    ctx.arc(0,0,5,0,2*Math.PI);
-    ctx.fillStyle="#333";
-    ctx.fill();
+ drawClock(
+   "nyClock",
+   "America/New_York"
+ );
+
 }
 
-function drawNumbers(ctx,radius){
+setInterval(update,1000);
 
-    ctx.font=radius*0.18+"px Segoe UI";
-    ctx.textBaseline="middle";
-    ctx.textAlign="center";
-
-    for(let num=1; num<=12; num++){
-
-        let ang=num*Math.PI/6;
-
-        ctx.rotate(ang);
-        ctx.translate(0,-radius*0.75);
-        ctx.rotate(-ang);
-
-        ctx.fillStyle="#333";
-        ctx.fillText(num.toString(),0,0);
-
-        ctx.rotate(ang);
-        ctx.translate(0,radius*0.75);
-        ctx.rotate(-ang);
-    }
-}
-
-function drawHand(ctx,pos,length,width,color){
-
-    ctx.beginPath();
-    ctx.lineWidth=width;
-    ctx.lineCap="round";
-    ctx.strokeStyle=color;
-
-    ctx.moveTo(0,0);
-    ctx.rotate(pos);
-    ctx.lineTo(0,-length);
-    ctx.stroke();
-
-    ctx.rotate(-pos);
-}
-
-function drawTime(ctx,radius,hour,minute,second){
-
-    hour = hour % 12;
-
-    hour =
-    hour*Math.PI/6 +
-    minute*Math.PI/(6*60) +
-    second*Math.PI/(360*60);
-
-    drawHand(ctx,hour,radius*0.45,6,"#111");
-
-    minute =
-    minute*Math.PI/30 +
-    second*Math.PI/(30*60);
-
-    drawHand(ctx,minute,radius*0.65,4,"#222");
-
-    second =
-    second*Math.PI/30;
-
-    drawHand(ctx,second,radius*0.75,2,"#d62828");
-}
-
-function updateWorldClocks(){
-
-    drawClock("parisClock","Europe/Paris");
-    drawClock("londonClock","Europe/London");
-    drawClock("nyClock","America/New_York");
-}
-
-setInterval(updateWorldClocks,1000);
-
-updateWorldClocks();
+update();
 
 </script>
-    // ===== METEO =====
 
-async function loadWeather() {
-
-    const weatherDiv =
-        document.getElementById("weather");
-
-    weatherDiv.innerHTML =
-        "Localisation...";
-
-    navigator.geolocation.getCurrentPosition(
-
-    async position => {
-
-        try {
-
-            const lat =
-                position.coords.latitude;
-
-            const lon =
-                position.coords.longitude;
-
-            const response = await fetch(
-
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=33dd8e07bda2e3a42995474eb8af659d`
-
-            );
-
-            const data =
-                await response.json();
-
-            weatherDiv.innerHTML =
-
-            `
-            <div style="font-size:28px;font-weight:600">
-                ${Math.round(data.main.temp)}°C
-            </div>
-
-            <div style="margin-top:10px">
-                ${data.name}
-            </div>
-
-            <div style="margin-top:6px">
-                ${data.weather[0].description}
-            </div>
-
-            <div style="margin-top:10px">
-                Ressenti :
-                ${Math.round(data.main.feels_like)}°C
-            </div>
-
-            <div>
-                Humidité :
-                ${data.main.humidity}%
-            </div>
-
-            <div>
-                Vent :
-                ${Math.round(data.wind.speed)}
-                km/h
-            </div>
-            `;
-
-        }
-
-        catch(error){
-
-            weatherDiv.innerHTML =
-            "Impossible de charger la météo";
-
-        }
-
-    },
-
-    () => {
-
-        weatherDiv.innerHTML =
-        "Localisation refusée";
-
-    });
-
-}
-
-loadWeather();
-    <script>
-
-   </body>
+</body>
 </html>
