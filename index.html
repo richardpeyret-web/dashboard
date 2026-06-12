@@ -307,18 +307,20 @@ loadWeather();
 
 }
 
+async function loadRates(){
+
+    const fxDiv =
+        document.getElementById("fx");
+
+    fxDiv.innerHTML =
+    `
+    EUR/USD : 1.15<br>
+    EUR/CHF : 0.94<br>
+    EUR/GBP : 0.85
+    `;
+}
+
 loadRates();
-
-</script>
-    <div class="card">
-<h2>Devises</h2>
-
-<div id="fx">
-
-Chargement...
-
-</div>
-
 </div>
 
 </body>
